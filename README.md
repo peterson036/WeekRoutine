@@ -1,4 +1,4 @@
-This is a Android App Project using Kotlin
+This is a Android App Project using Kotlin.
 You could use it as Reminder of Week Routines.
 
 The Routine Data are set in Project code.
