@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var listData: ListData
     var dataArrayList = ArrayList<ListData?>()
 
+
     fun getThisWeekDays(): Array<String?> {
         val today = LocalDate.now()
         // 取得本週一
@@ -182,7 +183,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // TODO: 先得出本週平日日期的陣列和本週假日日期的陣列，再加上上次完成日期。就可以得出isFinish陣列
 
         var rawTimeList = arrayOf(
             "2026/03/02", "2026/03/02", "2026/03/01",
@@ -201,6 +201,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // 本週平日日期的陣列和本週假日日期的陣列，再加上上次完成日期。就可以得出isFinish陣列
 
         var rawIsFinishList = booleanArrayOf(
             false, false, false,
@@ -319,13 +320,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        /*
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-         */
 
         val sharedPref = getSharedPreferences(
             getString(R.string.preference_key), Context.MODE_PRIVATE)
@@ -384,10 +378,7 @@ class MainActivity : AppCompatActivity() {
             if(tempData?.time != formattedDate) {
                 tempData?.time = formattedDate
 
-                // Peter Test:mark
-
                 var lastTimesList = timeList
-
 
                 val dataIndex = tempData?.orderNo?.minus(1) ?: 0
                 if (dataIndex >= 0 && dataIndex < timeList.size) {
@@ -395,8 +386,6 @@ class MainActivity : AppCompatActivity() {
                     timeList[dataIndex] = formattedDate
                     isFinishList[dataIndex] = true
                 }
-
-                // val backup_last_time = sharedPref.getString(getString(R.string.pf_backup_last_time), "")
 
                 sharedPref.edit {
                     putString(
