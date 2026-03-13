@@ -59,7 +59,8 @@ class MainActivity : AppCompatActivity() {
             1, 2, 3,
             4, 5, 6,
             7, 8, 9,
-            10, 11, 12
+            10, 11, 12,
+            13
         )
 
         val rawImageList = intArrayOf(
@@ -77,6 +78,8 @@ class MainActivity : AppCompatActivity() {
 
             R.drawable.pancake,
             R.drawable.pancake,
+            R.drawable.pancake,
+
             R.drawable.pancake
         )
 
@@ -95,14 +98,16 @@ class MainActivity : AppCompatActivity() {
 
             R.string.noDesc,
             R.string.myMonthlyRoutineDesc,
-            R.string.myDailyRoutineDesc
+            R.string.myDailyRoutineDesc,
 
+            R.string.myKettleDesc
         )
         val rawNameList = arrayOf(
             "洗澡", "刮鬍子", "洗衣服",
             "擦床頭/抖枕頭", "喝牛奶", "改善居家環境",
             "為周末預備體力", "掃地拖地_嗎", "修指甲_嗎",
-            "祭祀兄弟_可", "月度定期事項", "每日固定事項")
+            "祭祀兄弟_可", "月度定期事項", "每日固定事項",
+            "給熱水壺加水")
 
         /*
         * routineDaysOfWeek:
@@ -133,7 +138,9 @@ class MainActivity : AppCompatActivity() {
 
             intArrayOf(3),
             intArrayOf(7),
-            intArrayOf(10)
+            intArrayOf(10),
+
+            intArrayOf(3,6)
         )
 
         val today: LocalDate = LocalDate.now()
@@ -146,7 +153,8 @@ class MainActivity : AppCompatActivity() {
             true, true, true,
             true, true, true,
             true, true, true,
-            true, true, true)
+            true, true, true,
+            true)
 
         for (i in rawShowRoutine.indices) {
             rawShowRoutine[i] = false
@@ -188,7 +196,8 @@ class MainActivity : AppCompatActivity() {
             "2026/03/02", "2026/03/02", "2026/03/01",
             "2026/02/22", "2026/02/27", "2026/03/02",
             "2026/02/26", "2026/02/14", "2026/02/22",
-            "2026/02/08", "2026/02/09", "2026/03/04")
+            "2026/02/08", "2026/02/09", "2026/03/04",
+            "2026/03/14")
 
         // val timeList = arrayOf("30 mins", "2 mins", "45 mins", "10 mins", "60 mins", "45 mins", "30 mins")
 
@@ -207,7 +216,8 @@ class MainActivity : AppCompatActivity() {
             false, false, false,
             false, false, false,
             false, false, false,
-            false, false, false)
+            false, false, false,
+            false)
 
         for (i in rawIsFinishList.indices) {
             if((8 in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){

@@ -17,7 +17,9 @@
 \n(2) 下班閉眼小睡十五分鐘
 \n(3) 遊戲論壇的每日簽到
     </string>
-
+    <string name="myKettleDesc">
+\n (最好也要調鬧鐘)
+    </string>
     <string name="default_name">Name</string>
     <string name="default_time">Time</string>
     <!-- Strings used for fragments for navigation -->
