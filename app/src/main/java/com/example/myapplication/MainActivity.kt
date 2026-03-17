@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             4, 5, 6,
             7, 8, 9,
             10, 11, 12,
-            13
+            13, 14
         )
 
         val rawImageList = intArrayOf(
@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
             R.drawable.pancake,
             R.drawable.pancake,
 
+            R.drawable.pancake,
             R.drawable.pancake
         )
 
@@ -100,14 +101,15 @@ class MainActivity : AppCompatActivity() {
             R.string.myMonthlyRoutineDesc,
             R.string.myDailyRoutineDesc,
 
-            R.string.myKettleDesc
+            R.string.myKettleDesc,
+            R.string.noDesc
         )
         val rawNameList = arrayOf(
             "洗澡", "刮鬍子", "洗衣服",
             "擦床頭/抖枕頭", "喝牛奶", "改善居家環境",
             "為周末預備體力", "掃地拖地_嗎", "修指甲_嗎",
             "祭祀兄弟_可", "月度定期事項", "每日固定事項",
-            "給熱水壺加水")
+            "給熱水壺加水", "吃葉黃素凍")
 
         /*
         * routineDaysOfWeek:
@@ -140,7 +142,8 @@ class MainActivity : AppCompatActivity() {
             intArrayOf(7),
             intArrayOf(10),
 
-            intArrayOf(3,6)
+            intArrayOf(3,6),
+            intArrayOf(8)
         )
 
         val today: LocalDate = LocalDate.now()
@@ -154,7 +157,7 @@ class MainActivity : AppCompatActivity() {
             true, true, true,
             true, true, true,
             true, true, true,
-            true)
+            true, true)
 
         for (i in rawShowRoutine.indices) {
             rawShowRoutine[i] = false
@@ -197,7 +200,7 @@ class MainActivity : AppCompatActivity() {
             "2026/02/22", "2026/02/27", "2026/03/02",
             "2026/02/26", "2026/02/14", "2026/02/22",
             "2026/02/08", "2026/02/09", "2026/03/04",
-            "2026/03/14")
+            "2026/03/14", "2026/03/17")
 
         // val timeList = arrayOf("30 mins", "2 mins", "45 mins", "10 mins", "60 mins", "45 mins", "30 mins")
 
@@ -217,7 +220,7 @@ class MainActivity : AppCompatActivity() {
             false, false, false,
             false, false, false,
             false, false, false,
-            false)
+            false, false)
 
         for (i in rawIsFinishList.indices) {
             if((8 in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){
