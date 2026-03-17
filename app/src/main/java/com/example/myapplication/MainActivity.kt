@@ -53,6 +53,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    enum class DAYS_OF_WEEK(val n: Int){
+        NONE(0),
+        MONDAY(1),
+        TUESDAY(2),
+        WEDNESDAY(3),
+        THURSDAY(4),
+        FRIDAY(5),
+        SATURDAY(6),
+        SUNDAY(7),
+        WEEKDAY(8),
+        WEEKEND(9),
+        EVERYDAY(10)
+    }
     fun getInitData(sharedPref: SharedPreferences):ArrayList<ListData> {
 
         val rawOrderNoList = intArrayOf(
@@ -125,25 +138,29 @@ class MainActivity : AppCompatActivity() {
         * 10 for everyday
         * */
 
+
+
         val rawRoutineDaysOfWeek = arrayOf(
-            intArrayOf(10),
-            intArrayOf(8),
-            intArrayOf(9),
+            intArrayOf(DAYS_OF_WEEK.EVERYDAY.n),
+            intArrayOf(DAYS_OF_WEEK.WEEKDAY.n),
+            intArrayOf(DAYS_OF_WEEK.WEEKEND.n),
 
-            intArrayOf(9),
-            intArrayOf(2,5),
-            intArrayOf(1),
+            intArrayOf(DAYS_OF_WEEK.WEEKEND.n),
+            intArrayOf(DAYS_OF_WEEK.TUESDAY.n,
+                       DAYS_OF_WEEK.FRIDAY.n),
+            intArrayOf(DAYS_OF_WEEK.MONDAY.n),
 
-            intArrayOf(4),
-            intArrayOf(5),
-            intArrayOf(5),
+            intArrayOf(DAYS_OF_WEEK.THURSDAY.n),
+            intArrayOf(DAYS_OF_WEEK.FRIDAY.n),
+            intArrayOf(DAYS_OF_WEEK.FRIDAY.n),
 
-            intArrayOf(3),
-            intArrayOf(7),
-            intArrayOf(10),
+            intArrayOf(DAYS_OF_WEEK.WEDNESDAY.n),
+            intArrayOf(DAYS_OF_WEEK.SUNDAY.n),
+            intArrayOf(DAYS_OF_WEEK.EVERYDAY.n),
 
-            intArrayOf(3,6),
-            intArrayOf(8)
+            intArrayOf(DAYS_OF_WEEK.WEDNESDAY.n,
+                       DAYS_OF_WEEK.SATURDAY.n),
+            intArrayOf(DAYS_OF_WEEK.WEEKDAY.n)
         )
 
         val today: LocalDate = LocalDate.now()
@@ -164,18 +181,18 @@ class MainActivity : AppCompatActivity() {
             if(mDayOfWeek in rawRoutineDaysOfWeek[i]){
                 rawShowRoutine[i] = true
             } else {
-                var tempDay = 0
+                var tempDay = DAYS_OF_WEEK.NONE.n
                 when (mDayOfWeek) {
-                    in 1..5 -> tempDay = 8
-                    in 6 .. 7 -> tempDay = 9
+                    in 1..5 -> tempDay = DAYS_OF_WEEK.WEEKDAY.n
+                    in 6 .. 7 -> tempDay = DAYS_OF_WEEK.WEEKEND.n
                 }
-                if(10 in rawRoutineDaysOfWeek[i]){
+                if(DAYS_OF_WEEK.EVERYDAY.n in rawRoutineDaysOfWeek[i]){
                     rawShowRoutine[i] = true
                 }
-                if(8 in rawRoutineDaysOfWeek[i] && tempDay == 8){
+                if(DAYS_OF_WEEK.WEEKDAY.n in rawRoutineDaysOfWeek[i] && tempDay == DAYS_OF_WEEK.WEEKDAY.n){
                     rawShowRoutine[i] = true
                 }
-                if(9 in rawRoutineDaysOfWeek[i] && tempDay == 9){
+                if(DAYS_OF_WEEK.WEEKEND.n in rawRoutineDaysOfWeek[i] && tempDay == DAYS_OF_WEEK.WEEKEND.n){
                     rawShowRoutine[i] = true
                 }
             }
@@ -183,13 +200,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         for(i in rawImageList.indices) {
-            if (8 in rawRoutineDaysOfWeek[i]) {
+            if (DAYS_OF_WEEK.WEEKDAY.n in rawRoutineDaysOfWeek[i]) {
                 rawImageList[i] = R.drawable.pizza
             }
-            if (9 in rawRoutineDaysOfWeek[i]) {
+            if (DAYS_OF_WEEK.WEEKEND.n in rawRoutineDaysOfWeek[i]) {
                 rawImageList[i] = R.drawable.burger
             }
-            if (rawOrderNoList[i] == 12) {
+            if (rawOrderNoList[i] == 12) { //12 for 每日固定事項
                 rawImageList[i] = R.drawable.fries
             }
         }
@@ -223,9 +240,9 @@ class MainActivity : AppCompatActivity() {
             false, false)
 
         for (i in rawIsFinishList.indices) {
-            if((8 in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){
+            if((DAYS_OF_WEEK.WEEKDAY.n in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){
                 rawIsFinishList[i] = true
-            } else if((9 in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){
+            } else if((DAYS_OF_WEEK.WEEKEND.n in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){
                 rawIsFinishList[i] = true
             } else if(rawTimeList[i] == formattedDate) {
                 rawIsFinishList[i] = true
