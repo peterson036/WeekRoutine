@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.icu.text.DateFormat
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.Toast
@@ -429,26 +430,29 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-
+        binding.ivRefreshToToday.setOnClickListener {
+            reopenApp()
+        }
 
     }
 
     override fun onResume() {
         super.onResume()
 
-        reopenAppIfDateIsChanged()
+        showRefreshBtnIfDateChanged()
     }
 
-    fun reopenAppIfDateIsChanged(){
+    fun showRefreshBtnIfDateChanged(){
         val today: LocalDate = LocalDate.now()
         val resumeFormattedDate = today.format(myFormatter)
-
         if(resumeFormattedDate != mCurrentDate){
+            binding.ivRefreshToToday.visibility = View.VISIBLE
+        }
+    }
+    fun reopenApp(){
             val intent = getIntent()
             finish()
             startActivity(intent)
-
-        }
     }
 
 }
