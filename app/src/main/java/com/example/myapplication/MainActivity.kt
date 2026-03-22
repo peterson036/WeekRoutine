@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var listAdapter: ListAdapter
     private lateinit var listData: ListData
-    var dataArrayList = ArrayList<ListData?>()
+    var dataArrayList = ArrayList<ListData>()
 
     val myFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
     var mCurrentDate = LocalDate.now().format(myFormatter)
@@ -344,6 +344,8 @@ class MainActivity : AppCompatActivity() {
 
 
     var mMyInitData:ArrayList<ListData> = ArrayList<ListData>()
+    lateinit var mLastTimesList: ArrayList<String>
+    lateinit var mListViewMapping: IntArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -351,38 +353,46 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         val sharedPref = getSharedPreferences(
             getString(R.string.preference_key), Context.MODE_PRIVATE)
+
 
         // TODO: 資料來源可擴充。
         //       改成可以同時相容於1.內建資料 2.遠端資料庫撈取
         // TODO: 可以一次顯示所有事項的最後完成日期。
         //      方便手動更新程式碼內建資料的最後完成日期。
         //      (要安裝在不同手機時會用到。)
+        initData(sharedPref)
+        initAdapter(sharedPref)
 
+        binding.ivRefreshToToday.setOnClickListener {
+            hideRefreshBtn()
+            initData(sharedPref)
+            initAdapter(sharedPref)
+        }
+
+    }
+
+    fun initData(sharedPref: SharedPreferences){
         mMyInitData = getDataSource(sharedPref, DATA_SOURCE.FROM_INIT)
+        mLastTimesList = getTimeList(mMyInitData)
 
-        val orderNoList = getOrderList(mMyInitData)
-        val imageList = getImageList(mMyInitData)
-        val descList = getDescList(mMyInitData)
-        val nameList = getNameList(mMyInitData)
-        var routineDaysOfWeek = getRoutineDaysOfWeek(mMyInitData)
-
+    }
+    fun initAdapter(sharedPref: SharedPreferences){
         val today: LocalDate = LocalDate.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
         val formattedDate = today.format(formatter)
 
         var showRoutine = getShowRoutine(mMyInitData)
-        var timeList = getTimeList(mMyInitData)
-        var isFinishList = getIsFinishList(mMyInitData)
 
-        var listViewMapping = IntArray(mMyInitData.size){it + 1}
+        mListViewMapping = IntArray(mMyInitData.size){it + 1}
+
+        dataArrayList.clear()
 
         var j = 0;
-        for (i in imageList.indices) {
+        for (i in mLastTimesList.indices) {
             if(showRoutine[i]) {
-                listViewMapping[j] = i
+                mListViewMapping[j] = i
                 dataArrayList.add(mMyInitData[i])
                 j++
             }
@@ -392,46 +402,42 @@ class MainActivity : AppCompatActivity() {
         binding.listview.isClickable = true
         binding.listview.onItemClickListener = OnItemClickListener { adapterView, view, i, l ->
             val intent = Intent(this@MainActivity, DetailedActivity::class.java)
-            val realNo = listViewMapping[i]
+            val realNo = mListViewMapping[i]
+            val data = mMyInitData.get(realNo)
 
             intent.putExtra("orderNo", realNo)
-            intent.putExtra("name", nameList[realNo])
-            intent.putExtra("time", timeList[realNo])
-            intent.putExtra("desc", descList[realNo])
-            intent.putExtra("image", imageList[realNo])
-            intent.putExtra("isfinish", isFinishList[realNo])
+            intent.putExtra("name", data.name)
+            intent.putExtra("time", data.time)
+            intent.putExtra("desc", data.desc)
+            intent.putExtra("image", data.image)
+            intent.putExtra("isfinish", data.isFinish)
             startActivity(intent)
         }
 
         binding.listview.onItemLongClickListener = AdapterView.OnItemLongClickListener{ parent, view, position, id ->
             var tempData = dataArrayList.get(position)
 
-            if(tempData?.time != formattedDate) {
-                tempData?.time = formattedDate
+            if(tempData.time != formattedDate) {
+                tempData.time = formattedDate
 
-                var lastTimesList = timeList
-
-                val dataIndex = tempData?.orderNo?.minus(1) ?: 0
-                if (dataIndex >= 0 && dataIndex < timeList.size) {
-                    lastTimesList[dataIndex] = formattedDate
-                    timeList[dataIndex] = formattedDate
-                    isFinishList[dataIndex] = true
+                val dataIndex = tempData.orderNo.minus(1) ?: 0
+                if (dataIndex >= 0 && dataIndex < mLastTimesList.size) {
+                    mLastTimesList[dataIndex] = formattedDate
+                    tempData.time = formattedDate
+                    tempData.isFinish = true
+                    mMyInitData.set(dataIndex, tempData)
                 }
 
                 sharedPref.edit {
                     putString(
                         getString(R.string.pf_backup_last_time),
-                        lastTimesList.joinToString(",")
+                        mLastTimesList.joinToString(",")
                     )
                 }
                 dataArrayList.set(position, tempData)
                 listAdapter.notifyDataSetChanged()
             }
             true
-        }
-
-        binding.ivRefreshToToday.setOnClickListener {
-            reopenApp()
         }
 
     }
@@ -449,10 +455,10 @@ class MainActivity : AppCompatActivity() {
             binding.ivRefreshToToday.visibility = View.VISIBLE
         }
     }
-    fun reopenApp(){
-            val intent = getIntent()
-            finish()
-            startActivity(intent)
+
+    fun hideRefreshBtn(){
+        binding.ivRefreshToToday.visibility = View.INVISIBLE
+
     }
 
 }

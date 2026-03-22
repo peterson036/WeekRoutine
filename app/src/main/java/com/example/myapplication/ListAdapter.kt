@@ -10,7 +10,7 @@ import android.widget.TextView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class ListAdapter(context: Context, dataArrayList: ArrayList<ListData?>?) :
+class ListAdapter(context: Context, dataArrayList: ArrayList<ListData>) :
     ArrayAdapter<ListData?>(context, R.layout.list_item, dataArrayList!!) {
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         var view = view
