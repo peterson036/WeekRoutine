@@ -272,51 +272,6 @@ class MainActivity : AppCompatActivity() {
         return ArrayList<ListData>()
     }
 
-    fun getOrderList(listData:ArrayList<ListData>):ArrayList<Int>{
-        var myArray = ArrayList<Int>()
-        for(i in listData.indices){
-            myArray.add(listData[i].orderNo)
-        }
-
-        return myArray
-    }
-
-    fun getImageList(listData:ArrayList<ListData>):ArrayList<Int>{
-        var myArray = ArrayList<Int>()
-        for(i in listData.indices){
-            myArray.add(listData[i].image)
-        }
-
-        return myArray
-    }
-
-    fun getDescList(listData:ArrayList<ListData>):ArrayList<Int>{
-        var myArray = ArrayList<Int>()
-        for(i in listData.indices){
-            myArray.add(listData[i].desc)
-        }
-
-        return myArray
-    }
-
-    fun getNameList(listData:ArrayList<ListData>):ArrayList<String>{
-        var myArray = ArrayList<String>()
-        for(i in listData.indices){
-            myArray.add(listData[i].name)
-        }
-
-        return myArray
-    }
-
-    fun getRoutineDaysOfWeek(listData:ArrayList<ListData>):ArrayList<IntArray>{
-        var myArray = ArrayList<IntArray>()
-        for(i in listData.indices){
-            myArray.add(listData[i].routineDaysOfWeek)
-        }
-
-        return myArray
-    }
-
     fun getShowRoutine(listData:ArrayList<ListData>):ArrayList<Boolean>{
         var myArray = ArrayList<Boolean>()
         for(i in listData.indices){
@@ -329,14 +284,6 @@ class MainActivity : AppCompatActivity() {
         var myArray = ArrayList<String>()
         for(i in listData.indices){
             myArray.add(listData[i].time)
-        }
-
-        return myArray
-    }
-    fun getIsFinishList(listData:ArrayList<ListData>):ArrayList<Boolean>{
-        var myArray = ArrayList<Boolean>()
-        for(i in listData.indices){
-            myArray.add(listData[i].isFinish)
         }
 
         return myArray
@@ -362,15 +309,18 @@ class MainActivity : AppCompatActivity() {
         // TODO: 可以一次顯示所有事項的最後完成日期。
         //      方便手動更新程式碼內建資料的最後完成日期。
         //      (要安裝在不同手機時會用到。)
-        initData(sharedPref)
-        initAdapter(sharedPref)
+        updateListviewToToday(sharedPref)
 
         binding.ivRefreshToToday.setOnClickListener {
             hideRefreshBtn()
-            initData(sharedPref)
-            initAdapter(sharedPref)
+            updateListviewToToday(sharedPref)
         }
 
+    }
+
+    fun updateListviewToToday(sharedPref: SharedPreferences){
+        initData(sharedPref)
+        initAdapter(sharedPref)
     }
 
     fun initData(sharedPref: SharedPreferences){
@@ -383,7 +333,7 @@ class MainActivity : AppCompatActivity() {
         val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
         val formattedDate = today.format(formatter)
 
-        var showRoutine = getShowRoutine(mMyInitData)
+        val showRoutine = getShowRoutine(mMyInitData)
 
         mListViewMapping = IntArray(mMyInitData.size){it + 1}
 
