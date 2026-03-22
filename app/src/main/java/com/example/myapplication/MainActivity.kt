@@ -29,15 +29,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var listData: ListData
     var dataArrayList = ArrayList<ListData?>()
 
+    val myFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+    var mCurrentDate = LocalDate.now().format(myFormatter)
 
     fun getThisWeekDays(): Array<String?> {
         val today = LocalDate.now()
         // 取得本週一
         val monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
-        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
         // 生成週一到週日的列表
-        return ((0..6).map { (monday.plusDays(it.toLong())).format(formatter) }).toTypedArray()
+        return ((0..6).map { (monday.plusDays(it.toLong())).format(myFormatter) }).toTypedArray()
     }
     val thisWeek = getThisWeekDays()
 
@@ -164,8 +165,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         val today: LocalDate = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
-        val formattedDate = today.format(formatter)
+        val formattedDate = today.format(myFormatter)
 
         val mDayOfWeek = today.dayOfWeek.value
 
@@ -432,4 +432,24 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        reopenAppIfDateIsChanged()
+    }
+
+    fun reopenAppIfDateIsChanged(){
+        val today: LocalDate = LocalDate.now()
+        val resumeFormattedDate = today.format(myFormatter)
+
+        if(resumeFormattedDate != mCurrentDate){
+            val intent = getIntent()
+            finish()
+            startActivity(intent)
+
+        }
+    }
+
 }
+
