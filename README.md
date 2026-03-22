@@ -4,5 +4,8 @@
   
   You could just modify the routine data and regenerate the app(.apk file). Or add one API interface to get data from online database by yourself.
 
-  LongClick routine could complete ths routine. Click routine could see the details. 
+(version 1)
+  LongClick routine could complete ths routine. Click routine could see the details.
+(version 2)
+  Show button which could update listview data to today when resume app.
 
