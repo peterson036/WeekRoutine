@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         // 生成週一到週日的列表
         return ((0..6).map { (monday.plusDays(it.toLong())).format(myFormatter) }).toTypedArray()
     }
-    val thisWeek = getThisWeekDays()
 
     enum class DATA_SOURCE {FROM_INIT, FROM_POST}
 
@@ -239,6 +238,8 @@ class MainActivity : AppCompatActivity() {
             false, false, false,
             false, false, false,
             false, false)
+
+        val thisWeek = getThisWeekDays()
 
         for (i in rawIsFinishList.indices) {
             if((DAYS_OF_WEEK.WEEKDAY.n in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){
