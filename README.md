@@ -18,7 +18,7 @@
 
 [==Why This App is Good==]
 
-(1) Can keep right last completed date if new routine always add in the tail of list data
+(1) Can keep right last completed date even reinstalled if new routine always add in the tail of list data
 
 (2) Less in Clean Code, More in our Demand
 
