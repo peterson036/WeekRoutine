@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">一個好週</string>
     <string name="preference_key">preference_key_week_routine</string>
+    <string name="preference_key_monthly">preference_key_week_routine_monthly</string>
+
     <string name="pf_backup_last_time">pf_backup_last_time</string>
 
     <string name="noDesc"> (空白) </string>

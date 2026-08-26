@@ -21,6 +21,7 @@ import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 import kotlin.arrayOf
 import androidx.core.content.edit
+import com.example.myapplication.monthly.MonthlyActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,9 +45,18 @@ class MainActivity : AppCompatActivity() {
 
     enum class DATA_SOURCE {FROM_INIT, FROM_POST}
 
+    enum class USE_CASES {CASE_DEFAULT_SELF_USE, CASE_1_BOLT_PREVENTION }
+
+    val myUseCase = USE_CASES.CASE_1_BOLT_PREVENTION
     fun getDataSource(sharedPref: SharedPreferences, dataSource:DATA_SOURCE):ArrayList<ListData>{
         if(dataSource == DATA_SOURCE.FROM_INIT){
-            return getInitData(sharedPref)
+            if(myUseCase == USE_CASES.CASE_DEFAULT_SELF_USE) {
+                return getInitData(sharedPref)
+            } else if(myUseCase == USE_CASES.CASE_1_BOLT_PREVENTION){
+                return getInitDataCASE1_BP(sharedPref)
+            } else {
+                return getInitData(sharedPref)
+            }
         } else if(dataSource == DATA_SOURCE.FROM_POST){
             return getPostData()
         } else{
@@ -67,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         WEEKEND(9),
         EVERYDAY(10)
     }
+    // 自用
     fun getInitData(sharedPref: SharedPreferences):ArrayList<ListData> {
 
         val rawOrderNoList = intArrayOf(
@@ -251,6 +262,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val rawTimeDescList = arrayOf(
+            "", "", "",
+            "", "", "",
+            "", "", "",
+            "", "", "",
+            "", "")
+
         var rawListData:ArrayList<ListData> = ArrayList<ListData>()
 
         for (i in rawImageList.indices) {
@@ -260,11 +278,185 @@ class MainActivity : AppCompatActivity() {
                         rawOrderNoList[i], rawNameList[i],
                         rawTimeList[i], rawDescList[i],
                         rawImageList[i], rawRoutineDaysOfWeek[i],
-                        rawShowRoutine[i] ,rawIsFinishList[i])
+                        rawShowRoutine[i] ,rawIsFinishList[i],
+                        rawTimeDescList[i])
             )
 
 
         }
+
+        return rawListData
+
+    }
+
+    // 因為住家或公司附近有大型施工地而造成靜電漏電。
+    // 而需要定期改善環境和補充營養，以維持身體健康。
+    fun getInitDataCASE1_BP(sharedPref: SharedPreferences):ArrayList<ListData> {
+
+        val rawOrderNoList = intArrayOf(
+            1, 2, 3,
+            4, 5, 6,
+            7
+        )
+
+        val rawImageList = intArrayOf(
+            R.drawable.pancake,
+            R.drawable.pancake,
+            R.drawable.pancake,
+
+            R.drawable.pancake,
+            R.drawable.pancake,
+            R.drawable.pancake,
+
+            R.drawable.pancake
+        )
+
+        val rawDescList = intArrayOf(
+            R.string.noDesc,
+            R.string.noDesc,
+            R.string.noDesc,
+
+            R.string.noDesc,
+            R.string.noDesc,
+            R.string.noDesc,
+
+            R.string.noDesc
+        )
+        val rawNameList = arrayOf(
+            "改善辦公環境", "吃葉黃素凍(眼)", "吃護膝食物(膝)",
+            "吃高鈣食物(牙)", "吃高麗菜(腸胃)", "是否買魚油(心腦)",
+            "月度中醫調理(腎和膀胱)")
+
+        /*
+        * routineDaysOfWeek:
+        * 1 for Mon
+        * 2 for Tue
+        * 3 for Wed
+        * 4 for Thr
+        * 5 for Fri
+        * 6 for Sat
+        * 7 for Sun
+        * 8 for Weekday
+        * 9 for Weekend
+        * 10 for everyday
+        * */
+
+
+
+        val rawRoutineDaysOfWeek = arrayOf(
+            intArrayOf(DAYS_OF_WEEK.MONDAY.n),
+            intArrayOf(DAYS_OF_WEEK.WEEKDAY.n),
+            intArrayOf(DAYS_OF_WEEK.WEEKDAY.n),
+
+            intArrayOf(DAYS_OF_WEEK.WEEKDAY.n),
+            intArrayOf(DAYS_OF_WEEK.WEEKDAY.n),
+            intArrayOf(DAYS_OF_WEEK.WEEKEND.n),
+
+            intArrayOf(DAYS_OF_WEEK.TUESDAY.n, DAYS_OF_WEEK.FRIDAY.n)
+        )
+
+        val today: LocalDate = LocalDate.now()
+        val formattedDate = today.format(myFormatter)
+
+        val mDayOfWeek = today.dayOfWeek.value
+
+        var rawShowRoutine = booleanArrayOf(
+            true, true, true,
+            true, true, true,
+            true)
+
+        for (i in rawShowRoutine.indices) {
+            rawShowRoutine[i] = false
+            if(mDayOfWeek in rawRoutineDaysOfWeek[i]){
+                rawShowRoutine[i] = true
+            } else {
+                var tempDay = DAYS_OF_WEEK.NONE.n
+                when (mDayOfWeek) {
+                    in 1..5 -> tempDay = DAYS_OF_WEEK.WEEKDAY.n
+                    in 6 .. 7 -> tempDay = DAYS_OF_WEEK.WEEKEND.n
+                }
+                if(DAYS_OF_WEEK.EVERYDAY.n in rawRoutineDaysOfWeek[i]){
+                    rawShowRoutine[i] = true
+                }
+                if(DAYS_OF_WEEK.WEEKDAY.n in rawRoutineDaysOfWeek[i] && tempDay == DAYS_OF_WEEK.WEEKDAY.n){
+                    rawShowRoutine[i] = true
+                }
+                if(DAYS_OF_WEEK.WEEKEND.n in rawRoutineDaysOfWeek[i] && tempDay == DAYS_OF_WEEK.WEEKEND.n){
+                    rawShowRoutine[i] = true
+                }
+            }
+
+        }
+
+        for(i in rawImageList.indices) {
+            if (DAYS_OF_WEEK.WEEKDAY.n in rawRoutineDaysOfWeek[i]) {
+                rawImageList[i] = R.drawable.pizza
+            }
+            if (DAYS_OF_WEEK.WEEKEND.n in rawRoutineDaysOfWeek[i]) {
+                rawImageList[i] = R.drawable.burger
+            }
+            if (rawOrderNoList[i] == 7) { // 7 for 月度中醫調理(腎和膀胱)
+                rawImageList[i] = R.drawable.fries
+            }
+        }
+
+
+        var rawTimeList = arrayOf(
+            "2026/08/17", "2026/08/19", "2026/08/19",
+            "2026/08/19", "2026/08/19", "2026/08/22",
+            "2026/08/21")
+
+        // val timeList = arrayOf("30 mins", "2 mins", "45 mins", "10 mins", "60 mins", "45 mins", "30 mins")
+
+        val backup_last_time = sharedPref.getString(getString(R.string.pf_backup_last_time),"") ?: ""
+
+        if(backup_last_time != "") {
+            val lastTimes = backup_last_time.split(",").toTypedArray()
+            for(i in lastTimes.indices){
+                rawTimeList[i] = lastTimes[i]
+            }
+        }
+
+        // 本週平日日期的陣列和本週假日日期的陣列，再加上上次完成日期。就可以得出isFinish陣列
+
+        var rawIsFinishList = booleanArrayOf(
+            false, false, false,
+            false, false, false,
+            false)
+
+        val thisWeek = getThisWeekDays()
+
+        for (i in rawIsFinishList.indices) {
+            if((DAYS_OF_WEEK.WEEKDAY.n in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){
+                rawIsFinishList[i] = true
+            } else if((DAYS_OF_WEEK.WEEKEND.n in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){
+                rawIsFinishList[i] = true
+            } else if(rawTimeList[i] == formattedDate) {
+                rawIsFinishList[i] = true
+            }
+        }
+
+        val rawTimeDescList = arrayOf(
+            "", "", "",
+            "", "", "",
+            "")
+
+        var rawListData:ArrayList<ListData> = ArrayList<ListData>()
+
+        for (i in rawImageList.indices) {
+
+            rawListData.add(
+                ListData(
+                    rawOrderNoList[i], rawNameList[i],
+                    rawTimeList[i], rawDescList[i],
+                    rawImageList[i], rawRoutineDaysOfWeek[i],
+                    rawShowRoutine[i] ,rawIsFinishList[i],
+                    rawTimeDescList[i])
+            )
+
+
+        }
+
         return rawListData
 
     }
@@ -352,17 +544,23 @@ class MainActivity : AppCompatActivity() {
         binding.listview.adapter = listAdapter
         binding.listview.isClickable = true
         binding.listview.onItemClickListener = OnItemClickListener { adapterView, view, i, l ->
-            val intent = Intent(this@MainActivity, DetailedActivity::class.java)
+
             val realNo = mListViewMapping[i]
             val data = mMyInitData.get(realNo)
+            if(data.name == "月度定期事項"){
+                val intent = Intent(this@MainActivity, MonthlyActivity::class.java)
+                startActivity(intent)
+            } else {
+                val intent = Intent(this@MainActivity, DetailedActivity::class.java)
 
-            intent.putExtra("orderNo", realNo)
-            intent.putExtra("name", data.name)
-            intent.putExtra("time", data.time)
-            intent.putExtra("desc", data.desc)
-            intent.putExtra("image", data.image)
-            intent.putExtra("isfinish", data.isFinish)
-            startActivity(intent)
+                intent.putExtra("orderNo", realNo)
+                intent.putExtra("name", data.name)
+                intent.putExtra("time", data.time)
+                intent.putExtra("desc", data.desc)
+                intent.putExtra("image", data.image)
+                intent.putExtra("isfinish", data.isFinish)
+                startActivity(intent)
+            }
         }
 
         binding.listview.onItemLongClickListener = AdapterView.OnItemLongClickListener{ parent, view, position, id ->

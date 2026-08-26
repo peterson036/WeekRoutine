@@ -10,5 +10,6 @@ class ListData (
     var image: Int,
     var routineDaysOfWeek: IntArray,
     var showRoutine: Boolean,
-    var isFinish: Boolean
+    var isFinish: Boolean,
+    var timeDesc: String
 )
