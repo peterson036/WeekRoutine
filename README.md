@@ -1,14 +1,12 @@
 # Intoduction
 
-  This is an Android App Project using Kotlin.
-  You could use it as Reminder of Week Routines. 
-  
-  The Init Data of Routines is set in Project code. 
-  You could just modify the routine data 
-  and regenerate the app(.apk file). 
-  
-  Or add one API interface to get data 
-  from online database by yourself.
+1. This is an Android App Project using Kotlin.
+   You could use it as Reminder of Week Routines. 
+2. The Init Data of Routines is set in Project code. 
+   You could just modify the routine data 
+   and regenerate the app(.apk file). 
+3. You could add API interfaces to get data 
+   from online database by yourself.
 
 
 # Features
