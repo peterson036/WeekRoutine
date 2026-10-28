@@ -32,4 +32,4 @@ https://drive.google.com/file/d/1TN7pPIdiI5iKNqNKOOc5I6I1VzEJS_GL/view?fbclid=Iw
    are beneficial for health and productivity.
 2. Privacy-Friendly. All data is stored locally on your phone.
 3. Works Properly Without an Internet Connection.
-4. A user-friendly interface for everyone, especially older adults.
+4. A friendly UI (User Interface) for everyone, especially older adults.
