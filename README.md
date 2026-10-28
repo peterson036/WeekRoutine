@@ -28,9 +28,8 @@ https://drive.google.com/file/d/1TN7pPIdiI5iKNqNKOOc5I6I1VzEJS_GL/view?fbclid=Iw
 
 # Why This App is Good
 
-1. Can keep right last completed date even reinstalled 
-   if new routine always add in the tail of list data.
-2. Less in Clean Code, More in our Demand.
-3. Great at Privacy. Data only keep in local and your phone.
-4. Work in no Network enviroment.
-5. Friendly UI for the Olders and All People.
+1. Regular daily routines and weekly supplement intake
+   are beneficial for health and productivity.
+2. Privacy-Friendly. All data is stored locally on your phone.
+3. Works Properly Without an Internet Connection.
+4. A user-friendly interface for everyone, especially older adults.
