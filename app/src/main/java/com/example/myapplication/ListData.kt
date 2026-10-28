@@ -1,15 +1,16 @@
 package com.example.myapplication
 
-import java.time.DayOfWeek
+import kotlinx.serialization.Serializable
 
-class ListData (
-    var orderNo: Int,
-    var name: String,
-    var time: String,
-    var desc: Int,
-    var image: Int,
-    var routineDaysOfWeek: IntArray,
-    var showRoutine: Boolean,
-    var isFinish: Boolean,
-    var timeDesc: String
+@Serializable
+data class ListData (
+    var orderNo: Int = 0,
+    var name: String = "",
+    var time: String = "",
+    var desc: String = "",
+    var image: Int = R.drawable.pancake,
+    var routineDaysOfWeek: IntArray = IntArray(MainActivity.DAYS_OF_WEEK.NONE.n),
+    var showRoutine: Boolean = false,
+    var isFinish: Boolean = false,
+    var timeDesc: String = ""
 )

@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
@@ -14,14 +16,21 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.myapplication.DetailedActivity
 import com.example.myapplication.ListAdapter
 import com.example.myapplication.ListData
+import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ActivityMainBinding
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
+import com.example.myapplication.MainActivity.DAYS_OF_WEEK
+import com.example.myapplication.MainActivity.DATA_SOURCE
+import com.example.myapplication.module.ClassCustomizer
+import com.example.myapplication.module.RoutineDataManager
+import com.example.myapplication.module.RoutineListHandler
+import org.json.JSONArray
 
-class MonthlyActivity : AppCompatActivity() {
+class MonthlyActivity : AppCompatActivity(), RoutineListHandler {
     private lateinit var binding: ActivityMainBinding
     private lateinit var listAdapter: ListAdapter
     private lateinit var listData: ListData
@@ -39,11 +48,12 @@ class MonthlyActivity : AppCompatActivity() {
         return ((0..6).map { (monday.plusDays(it.toLong())).format(myFormatter) }).toTypedArray()
     }
 
-    enum class DATA_SOURCE {FROM_INIT, FROM_POST}
+    // enum class DATA_SOURCE {FROM_INIT, FROM_POST}
 
-    fun getDataSource(sharedPref: SharedPreferences, dataSource:DATA_SOURCE):ArrayList<ListData>{
+
+    override fun getDataSource(sharedPref: SharedPreferences, dataSource:DATA_SOURCE):ArrayList<ListData>{
         if(dataSource == DATA_SOURCE.FROM_INIT){
-            return getInitData(sharedPref)
+            return getInitData_byObject(sharedPref)
         } else if(dataSource == DATA_SOURCE.FROM_POST){
             return getPostData()
         } else{
@@ -51,245 +61,166 @@ class MonthlyActivity : AppCompatActivity() {
         }
     }
 
-    enum class DAYS_OF_WEEK(val n: Int){
-        NONE(0),
-        MONDAY(1),
-        TUESDAY(2),
-        WEDNESDAY(3),
-        THURSDAY(4),
-        FRIDAY(5),
-        SATURDAY(6),
-        SUNDAY(7),
-        WEEKDAY(8),
-        WEEKEND(9),
-        EVERYDAY(10)
+    override fun getInitData_byObject(sharedPref: SharedPreferences):ArrayList<ListData> {
+        var rawListData:ArrayList<ListData> = ArrayList<ListData>()
+
+        val default_date = "2026/08/15"
+        val default_desc = R.string.noDesc
+        val default_routineDay = intArrayOf(DAYS_OF_WEEK.EVERYDAY.n)
+        val default_image = R.drawable.chicken_drumstick
+        val default_showRoutine = true
+        val default_isFinish = false
+
+        rawListData.add(
+            ListData(
+                1, "洗棉被、換床單、換枕頭套",
+                "2026/10/01", getString(default_desc),
+                default_image, default_routineDay,
+                default_showRoutine ,default_isFinish,
+                "30")
+        )
+
+        rawListData.add(
+            ListData(
+                2, "浴缸水龍頭要定期放水"/*[防鐵鏽積水管]*/,
+                "2026/08/31", getString(default_desc),
+                default_image, default_routineDay,
+                default_showRoutine ,default_isFinish,
+                "30")
+        )
+
+        rawListData.add(
+            ListData(
+                3, "轉床墊",
+                "2026/09/30", getString(default_desc),
+                default_image, default_routineDay,
+                default_showRoutine ,default_isFinish,
+                "37")
+        )
+
+        rawListData.add(
+            ListData(
+                4, "理髮",
+                "2026/09/15", getString(default_desc),
+                default_image, default_routineDay,
+                default_showRoutine ,default_isFinish,
+                "40")
+        )
+
+        rawListData.add(
+            ListData(
+                5, "洗牙",
+                "2025/05/07", getString(default_desc),
+                default_image, default_routineDay,
+                default_showRoutine ,default_isFinish,
+                "180")
+        )
+
+        rawListData.add(
+            ListData(
+                6, "換濾心",
+                "2025/09/13", getString(default_desc),
+                default_image, default_routineDay,
+                default_showRoutine ,default_isFinish,
+                "400")
+        )
+
+        // Empty Routines
+        rawListData.add(
+            ListData(
+                7, "",
+                "", getString(default_desc),
+                default_image, intArrayOf(DAYS_OF_WEEK.NONE.n),
+                false ,false,
+                "")
+        )
+
+        rawListData.add(
+            ListData(
+                8, "",
+                "", getString(default_desc),
+                default_image, intArrayOf(DAYS_OF_WEEK.NONE.n),
+                false ,false,
+                "")
+        )
+
+        rawListData.add(
+            ListData(
+                9, "",
+                "", getString(default_desc),
+                default_image, intArrayOf(DAYS_OF_WEEK.NONE.n),
+                false ,false,
+                "")
+        )
+
+        rawListData.add(
+            ListData(
+                10, "",
+                "", getString(default_desc),
+                default_image, intArrayOf(DAYS_OF_WEEK.NONE.n),
+                false ,false,
+                "")
+        )
+
+        return refineSourceObjects(rawListData)
     }
-    fun getInitData(sharedPref: SharedPreferences):ArrayList<ListData> {
 
-        val rawOrderNoList = intArrayOf(
-            1, 2, 3,
-            4, 5, 6,
-            7, 8, 9,
-            10, 11, 12,
-            13, 14
-        )
-
-        val rawImageList = intArrayOf(
-            R.drawable.chicken_drumstick,
-            R.drawable.chicken_drumstick,
-            R.drawable.chicken_drumstick,
-
-            R.drawable.chicken_drumstick,
-            R.drawable.chicken_drumstick,
-            R.drawable.chicken_drumstick,
-
-            R.drawable.chicken_drumstick,
-            R.drawable.chicken_drumstick,
-            R.drawable.chicken_drumstick,
-
-            R.drawable.chicken_drumstick,
-            R.drawable.chicken_drumstick,
-            R.drawable.chicken_drumstick,
-
-            R.drawable.chicken_drumstick,
-            R.drawable.chicken_drumstick
-        )
-
-        val rawDescList = intArrayOf(
-            R.string.noDesc,
-            R.string.noDesc,
-            R.string.noDesc,
-
-            R.string.noDesc,
-            R.string.noDesc,
-            R.string.noDesc,
-
-            R.string.noDesc,
-            R.string.noDesc,
-            R.string.noDesc,
-
-            R.string.noDesc,
-            R.string.myMonthlyRoutineDesc,
-            R.string.myDailyRoutineDesc,
-
-            R.string.myKettleDesc,
-            R.string.noDesc
-        )
+    override fun refineSourceObjects(source: ArrayList<ListData> ): ArrayList<ListData>{
+        for(i in source.indices) {
+            if (MainActivity.DAYS_OF_WEEK.WEEKDAY.n in source[i].routineDaysOfWeek) {
+                source[i].image = R.drawable.pizza
+            }
+            if (MainActivity.DAYS_OF_WEEK.WEEKEND.n in source[i].routineDaysOfWeek) {
+                source[i].image = R.drawable.burger
+            }
+        }
 
 
-        val rawNameList = arrayOf(
-            "洗棉被、換床單、換枕頭套",
-            "浴缸水龍頭要定期放水(每30天)"/*[防鐵鏽積水管]*/,
-            "轉床墊",
-
-            "理髮",
-            "洗牙",
-            "換濾心",
-
-            "(EMPTY)", "(EMPTY)", "(EMPTY)",
-            "(EMPTY)", "(EMPTY)", "(EMPTY)",
-            "(EMPTY)", "(EMPTY)")
-
-
-
-        /*
-        * routineDaysOfWeek:
-        * 1 for Mon
-        * 2 for Tue
-        * 3 for Wed
-        * 4 for Thr
-        * 5 for Fri
-        * 6 for Sat
-        * 7 for Sun
-        * 8 for Weekday
-        * 9 for Weekend
-        * 10 for everyday
-        * */
-
-
-
-        val rawRoutineDaysOfWeek = arrayOf(
-            intArrayOf(DAYS_OF_WEEK.EVERYDAY.n),
-            intArrayOf(DAYS_OF_WEEK.EVERYDAY.n),
-            intArrayOf(DAYS_OF_WEEK.EVERYDAY.n),
-
-            intArrayOf(DAYS_OF_WEEK.EVERYDAY.n),
-            intArrayOf(DAYS_OF_WEEK.EVERYDAY.n),
-            intArrayOf(DAYS_OF_WEEK.EVERYDAY.n),
-
-            intArrayOf(DAYS_OF_WEEK.MONDAY.n),
-            intArrayOf(DAYS_OF_WEEK.MONDAY.n),
-            intArrayOf(DAYS_OF_WEEK.MONDAY.n),
-
-            intArrayOf(DAYS_OF_WEEK.MONDAY.n),
-            intArrayOf(DAYS_OF_WEEK.MONDAY.n),
-            intArrayOf(DAYS_OF_WEEK.MONDAY.n),
-
-            intArrayOf(DAYS_OF_WEEK.MONDAY.n),
-            intArrayOf(DAYS_OF_WEEK.MONDAY.n)
-        )
-
+        val thisWeek = getThisWeekDays()
         val today: LocalDate = LocalDate.now()
         val formattedDate = today.format(myFormatter)
 
         val mDayOfWeek = today.dayOfWeek.value
 
-        var rawShowRoutine = booleanArrayOf(
-            true, true, true,
-            true, true, true,
-            true, true, true,
-            true, true, true,
-            true, true)
-
-        for (i in rawShowRoutine.indices) {
-            rawShowRoutine[i] = false
-            if(mDayOfWeek in rawRoutineDaysOfWeek[i]){
-                rawShowRoutine[i] = true
+        for (i in source.indices) {
+            source[i].showRoutine = false
+            if (mDayOfWeek in source[i].routineDaysOfWeek) {
+                source[i].showRoutine = true
             } else {
                 var tempDay = DAYS_OF_WEEK.NONE.n
                 when (mDayOfWeek) {
                     in 1..5 -> tempDay = DAYS_OF_WEEK.WEEKDAY.n
-                    in 6 .. 7 -> tempDay = DAYS_OF_WEEK.WEEKEND.n
+                    in 6..7 -> tempDay = DAYS_OF_WEEK.WEEKEND.n
                 }
-                if(DAYS_OF_WEEK.EVERYDAY.n in rawRoutineDaysOfWeek[i]){
-                    rawShowRoutine[i] = true
+                if (DAYS_OF_WEEK.EVERYDAY.n in source[i].routineDaysOfWeek) {
+                    source[i].showRoutine = true
                 }
-                if(DAYS_OF_WEEK.WEEKDAY.n in rawRoutineDaysOfWeek[i] && tempDay == DAYS_OF_WEEK.WEEKDAY.n){
-                    rawShowRoutine[i] = true
+                if (DAYS_OF_WEEK.WEEKDAY.n in source[i].routineDaysOfWeek && tempDay == MainActivity.DAYS_OF_WEEK.WEEKDAY.n) {
+                    source[i].showRoutine = true
                 }
-                if(DAYS_OF_WEEK.WEEKEND.n in rawRoutineDaysOfWeek[i] && tempDay == DAYS_OF_WEEK.WEEKEND.n){
-                    rawShowRoutine[i] = true
+                if (DAYS_OF_WEEK.WEEKEND.n in source[i].routineDaysOfWeek && tempDay == MainActivity.DAYS_OF_WEEK.WEEKEND.n) {
+                    source[i].showRoutine = true
                 }
             }
-
         }
 
-        for(i in rawImageList.indices) {
-            if (DAYS_OF_WEEK.WEEKDAY.n in rawRoutineDaysOfWeek[i]) {
-                rawImageList[i] = R.drawable.chicken_drumstick
-            }
-            if (DAYS_OF_WEEK.WEEKEND.n in rawRoutineDaysOfWeek[i]) {
-                rawImageList[i] = R.drawable.chicken_drumstick
-            }
-            if (rawOrderNoList[i] == 12) { //12 for 每日固定事項
-                rawImageList[i] = R.drawable.chicken_drumstick
+        for (i in source.indices) {
+            if((MainActivity.DAYS_OF_WEEK.WEEKDAY.n in source[i].routineDaysOfWeek) && (source[i].time in thisWeek)){
+                source[i].isFinish = true
+            } else if((MainActivity.DAYS_OF_WEEK.WEEKEND.n in source[i].routineDaysOfWeek) && (source[i].time in thisWeek)){
+                source[i].isFinish = true
+            } else if(source[i].time == formattedDate) {
+                source[i].isFinish = true
             }
         }
-
-
-        var rawTimeList = arrayOf(
-            "2026/04/05", "2026/03/24", "2026/05/07",
-            "2026/03/22", "2025/05/07", "2025/09/13",
-            "2025/01/01", "2025/01/01", "2025/01/01",
-            "2025/01/01", "2025/01/01", "2025/01/01",
-            "2025/01/01", "2025/01/01")
-
-        // val timeList = arrayOf("30 mins", "2 mins", "45 mins", "10 mins", "60 mins", "45 mins", "30 mins")
-
-        val backup_last_time = sharedPref.getString(getString(R.string.pf_backup_last_time),"") ?: ""
-
-        if(backup_last_time != "") {
-            val lastTimes = backup_last_time.split(",").toTypedArray()
-            for(i in lastTimes.indices){
-                rawTimeList[i] = lastTimes[i]
-            }
-        }
-
-        // 本週平日日期的陣列和本週假日日期的陣列，再加上上次完成日期。就可以得出isFinish陣列
-
-        var rawIsFinishList = booleanArrayOf(
-            false, false, false,
-            false, false, false,
-            false, false, false,
-            false, false, false,
-            false, false)
-
-        val thisWeek = getThisWeekDays()
-
-        for (i in rawIsFinishList.indices) {
-            if((DAYS_OF_WEEK.WEEKDAY.n in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){
-                rawIsFinishList[i] = true
-            } else if((DAYS_OF_WEEK.WEEKEND.n in rawRoutineDaysOfWeek[i]) && (rawTimeList[i] in thisWeek)){
-                rawIsFinishList[i] = true
-            } else if(rawTimeList[i] == formattedDate) {
-                rawIsFinishList[i] = true
-            }
-        }
-
-        val rawTimeDescList = arrayOf(
-            "30", "30", "37",
-            "40", "180", "360",
-            "", "", "",
-            "", "", "",
-            "", "")
-
-        var rawListData:ArrayList<ListData> = ArrayList<ListData>()
-
-        for (i in rawImageList.indices) {
-
-            rawListData.add(
-                ListData(
-                    rawOrderNoList[i], rawNameList[i],
-                    rawTimeList[i], rawDescList[i],
-                    rawImageList[i], rawRoutineDaysOfWeek[i],
-                    rawShowRoutine[i] ,rawIsFinishList[i],
-                    rawTimeDescList[i])
-            )
-
-
-        }
-
-
-
-        return rawListData
-
+        return source;
     }
 
-    fun getPostData():ArrayList<ListData> {
+        fun getPostData():ArrayList<ListData> {
         return ArrayList<ListData>()
     }
 
-    fun getShowRoutine(listData:ArrayList<ListData>):ArrayList<Boolean>{
+    override fun getShowRoutine(listData:ArrayList<ListData>):ArrayList<Boolean>{
         var myArray = ArrayList<Boolean>()
         for(i in listData.indices){
             myArray.add(listData[i].showRoutine)
@@ -297,7 +228,7 @@ class MonthlyActivity : AppCompatActivity() {
 
         return myArray
     }
-    fun getTimeList(listData:ArrayList<ListData>):ArrayList<String>{
+    override fun getTimeList(listData:ArrayList<ListData>):ArrayList<String>{
         var myArray = ArrayList<String>()
         for(i in listData.indices){
             myArray.add(listData[i].time)
@@ -317,9 +248,7 @@ class MonthlyActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val sharedPref = getSharedPreferences(
-            getString(R.string.preference_key_monthly), Context.MODE_PRIVATE)
-
+        val sharedPref = getMonthlyRoutineSharePreference()
 
         // TODO: 資料來源可擴充。
         //       改成可以同時相容於1.內建資料 2.遠端資料庫撈取
@@ -333,15 +262,111 @@ class MonthlyActivity : AppCompatActivity() {
 
     fun updateListviewToToday(sharedPref: SharedPreferences){
         initData(sharedPref)
-        initAdapter(sharedPref)
+        initAdapter(sharedPref, false, false)
+    }
+    fun updateListviewToToday(sharedPref: SharedPreferences, isShowAll:Boolean, isShowEmpty:Boolean){
+        initData(sharedPref)
+        initAdapter(sharedPref, isShowAll, isShowEmpty)
     }
 
     fun initData(sharedPref: SharedPreferences){
-        mMyInitData = getDataSource(sharedPref, DATA_SOURCE.FROM_INIT)
+        setInitDataIfNeed(sharedPref)
+        mMyInitData = getCurrentData(sharedPref)
         mLastTimesList = getTimeList(mMyInitData)
 
     }
-    fun initAdapter(sharedPref: SharedPreferences){
+
+    override fun setInitDataIfNeed(sharedPref: SharedPreferences){
+        val newest_initdata_version = "1.0.0"
+        val pf_had_init = sharedPref.getBoolean(getString(R.string.pf_had_init),false)
+        val pf_initdata_version = sharedPref.getString(getString(R.string.pf_initdata_version),"")
+
+        if(!pf_had_init || !pf_initdata_version.equals(newest_initdata_version)) {
+            var initData:ArrayList<ListData> = ArrayList<ListData>()
+            initData = getDataSource(sharedPref, DATA_SOURCE.FROM_INIT)
+
+            val jsonString = ClassCustomizer.Json.encodeToString(initData)
+
+            sharedPref.edit {
+                putString(
+                    getString(R.string.pf_init_data_in_string),
+                    jsonString
+                )
+            }
+
+            println("PUTSTRING:" + jsonString)
+
+            sharedPref.edit {
+                putBoolean(
+                    getString(R.string.pf_had_init),
+                    true
+                )
+            }
+
+            sharedPref.edit {
+                putString(
+                    getString(R.string.pf_initdata_version),
+                    newest_initdata_version
+                )
+            }
+        }
+    }
+
+    override fun getCurrentData(sharedPref: SharedPreferences):ArrayList<ListData>{
+        var initData:ArrayList<ListData> = ArrayList<ListData>()
+
+        val savedJson = sharedPref.getString(getString(R.string.pf_init_data_in_string), "[]")
+
+        println("GETSTRING:" + savedJson)
+        val jsonArray = JSONArray(savedJson)
+
+        for (i in 0 until jsonArray.length()) {
+            val obj = jsonArray.getJSONObject(i)
+            val orderNo = obj.getInt("orderNo")
+            val name = obj.getString("name")
+            val time = obj.getString("time")
+            val desc = obj.getString("desc")
+            val image = obj.getInt("image")
+            val daysArray = obj.getJSONArray("routineDaysOfWeek")
+            val days = IntArray(daysArray.length()) { index ->
+                daysArray.getInt(index)
+            }
+            val showRoutine = obj.getBoolean("showRoutine")
+            val isFinish = obj.getBoolean("isFinish")
+            val timeDesc = obj.getString("timeDesc")
+
+            val storedListData:ListData = RoutineDataManager.getMonthlyRoutineData(orderNo)
+            if(storedListData.name.isEmpty()) {
+                initData.add(
+                    ListData(
+                        orderNo = orderNo,
+                        name = name,
+                        time = time,
+                        desc = desc,
+                        image = image,
+                        routineDaysOfWeek = days,
+                        showRoutine = showRoutine,
+                        isFinish = isFinish,
+                        timeDesc = timeDesc
+                    )
+                )
+            } else {
+                initData.add(storedListData)
+            }
+        }
+
+        val backup_last_time = sharedPref.getString(getString(R.string.pf_backup_last_time),"") ?: ""
+        if(backup_last_time != "") {
+            val lastTimes = backup_last_time.split(",").toTypedArray()
+            for(i in lastTimes.indices){
+                initData[i].time = lastTimes[i]
+            }
+        }
+        return refineSourceObjects(initData)
+    }
+    var mIsShowAll: Boolean = false
+    var mIsShowEmpty: Boolean = false
+    override fun initAdapter(sharedPref: SharedPreferences, showAll:Boolean, showEmpty:Boolean){
         val today: LocalDate = LocalDate.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
         val formattedDate = today.format(formatter)
@@ -354,7 +379,11 @@ class MonthlyActivity : AppCompatActivity() {
 
         var j = 0;
         for (i in mLastTimesList.indices) {
-            if(showRoutine[i]) {
+            val alwaysShowAll = true || showAll
+            val isEmpty = isItemEmpty(mMyInitData[i])
+            val shouldShow = (alwaysShowAll && !isEmpty) || (alwaysShowAll && showEmpty && isEmpty)
+
+            if(showRoutine[i] || shouldShow) {
                 mListViewMapping[j] = i
                 dataArrayList.add(mMyInitData[i])
                 j++
@@ -363,6 +392,28 @@ class MonthlyActivity : AppCompatActivity() {
         listAdapter = ListAdapter(this@MonthlyActivity, dataArrayList)
         binding.listview.adapter = listAdapter
         binding.listview.isClickable = true
+
+        binding.listview.onItemClickListener =
+            AdapterView.OnItemClickListener { adapterView, view, i, l ->
+
+                val realNo = mListViewMapping[i]
+                val data = mMyInitData.get(realNo)
+
+                val isMonthly = true
+                if(isMonthly){
+                    val intent = Intent(this@MonthlyActivity, MonthlyDetailedActivity::class.java)
+
+                    intent.putExtra("orderNo", data.orderNo)
+                    intent.putExtra("name", data.name)
+                    intent.putExtra("time", data.time)
+                    intent.putExtra("desc", data.desc)
+                    intent.putExtra("image", data.image)
+                    intent.putExtra("isfinish", data.isFinish)
+                    intent.putExtra("timeDesc", data.timeDesc)
+                    editItemLauncher.launch(intent)
+                }
+
+            }
 
         binding.listview.onItemLongClickListener = AdapterView.OnItemLongClickListener{ parent, view, position, id ->
             var tempData = dataArrayList.get(position)
@@ -390,7 +441,39 @@ class MonthlyActivity : AppCompatActivity() {
             true
         }
 
+        binding.swSelectAll.visibility = View.INVISIBLE
+        binding.cbShowEmpty.visibility = View.VISIBLE
+        binding.tvToday.visibility = View.INVISIBLE
+
+        binding.cbShowEmpty.setOnCheckedChangeListener { buttonView, isChecked ->
+            mIsShowEmpty = isChecked
+            updateListviewToToday(sharedPref, mIsShowAll, mIsShowEmpty)
+        }
+
+        binding.btBack.visibility = View.VISIBLE
+        binding.btBack.setOnClickListener {
+            finish()
+        }
+
     }
+
+    private val editItemLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+
+            if (result.resultCode == RESULT_OK) {
+                Log.d("Peter Test:", "MonthlyActivity Recieved RESULT_OK")
+                val orderNo = result.data?.getIntExtra("orderNo", 0)
+                Log.d("Peter Test:", "MonthlyActivity Recieved RESULT_OK:orderNo=" + orderNo)
+
+                if(orderNo != 0) {
+                    Log.d("Peter Test:", "MonthlyActivity Recieved RESULT_OK:updateListviewToToday()")
+                    updateListviewToToday(getMonthlyRoutineSharePreference(), mIsShowAll, mIsShowEmpty)
+                }
+            }
+        }
+
 
     override fun onResume() {
         super.onResume()
@@ -409,5 +492,10 @@ class MonthlyActivity : AppCompatActivity() {
     fun hideRefreshBtn(){
         binding.ivRefreshToToday.visibility = View.INVISIBLE
 
+    }
+
+    fun getMonthlyRoutineSharePreference(): SharedPreferences{
+        return getSharedPreferences(
+            getString(R.string.preference_key_monthly), Context.MODE_PRIVATE)
     }
 }

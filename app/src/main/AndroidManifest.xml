@@ -15,7 +15,18 @@
             android:name=".monthly.MonthlyActivity"
             android:exported="false" />
         <activity
+            android:name=".monthly.MonthlyDetailedActivity"
+            android:exported="false" />
+        <activity
+            android:name=".monthly.MonthlyEditRoutineActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
+        <activity
             android:name=".DetailedActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditRoutineActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 class ListAdapter(context: Context, dataArrayList: ArrayList<ListData>) :
-    ArrayAdapter<ListData?>(context, R.layout.list_item, dataArrayList!!) {
+    ArrayAdapter<ListData?>(context, R.layout.list_item, dataArrayList) {
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         var view = view
         val listData = getItem(position)
@@ -25,9 +25,16 @@ class ListAdapter(context: Context, dataArrayList: ArrayList<ListData>) :
         val listTimeDesc = view.findViewById<TextView>(R.id.listTimeDesc)
         val listTime = view.findViewById<TextView>(R.id.listTime)
         listImage.setImageResource(listData!!.image)
-        listName.text = listData.name
 
-        if(listData.timeDesc != ""){
+
+        val noContent = listData.desc.isNullOrEmpty()
+        if(noContent){
+            listName.text = listData.name
+       } else {
+            listName.text = listData.name + " Ⓒ"
+        }
+
+        if(!listData.timeDesc.equals("")){
             var blankPrefix = ""
             if(listData.timeDesc.length == 1){
                 blankPrefix = "  "
@@ -42,7 +49,11 @@ class ListAdapter(context: Context, dataArrayList: ArrayList<ListData>) :
                 listTimeDesc.setTextColor(Color.RED)
             } else if (percentageDouble > 0.7){
                 listTimeDesc.setTextColor(Color.BLUE)
+            } else {
+                listTimeDesc.setTextColor(Color.GREEN)
             }
+        } else {
+            listTimeDesc.text = ""
         }
 
 

@@ -8,4 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="lavender">#8692f7</color>
+    <color name="green">#00BC90</color>
+    <color name="blue">#5096F3</color>
+    <color name="light_yellow">#FFF9C4</color>
+    <color name="red">#F44336</color>
+
+
+
 </resources>

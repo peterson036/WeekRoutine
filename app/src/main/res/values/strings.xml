@@ -2,10 +2,28 @@
     <string name="app_name">一個好週</string>
     <string name="preference_key">preference_key_week_routine</string>
     <string name="preference_key_monthly">preference_key_week_routine_monthly</string>
+    <string name="preference_key_secret_numbers">preference_key_secret_numbers</string>
+    <string name="routine_list_data">routine_list_data</string>
+    <string name="routine_list_data_monthly">routine_list_data_monthly</string>
 
+
+    <!-- used both on weekly and monthly -->
     <string name="pf_backup_last_time">pf_backup_last_time</string>
+    <string name="pf_had_init">pf_had_init</string>
+    <string name="pf_initdata_version">pf_initdata_version</string>
+    <string name="pf_init_data_in_string">pf_init_data_in_string</string>
 
-    <string name="noDesc"> (空白) </string>
+
+    <!-- EditRoutine -->
+
+    <string name="era_routineName">每週習慣</string>
+    <string name="era_content">詳細內容</string>
+    <string name="era_use_period">設定為：</string>
+    <string name="era_long_period">長週期(天數)：</string>
+
+    <!-- Desc -->
+
+    <string name="noDesc"></string>
 
     <string name="myMonthlyRoutineDesc">
 \n(1) 洗棉被、換床單、換枕頭套(每30天)
@@ -21,6 +39,9 @@
 \n(2) 早晚喝杯水，白天喝瓶水
 \n(3) 遊戲論壇的每日簽到
 \n(4) 下班閉眼小睡十五分鐘
+\n(5) 健身：起床至少十分鐘再健身。
+\n&#160;&#160;&#160;&#160;(間隔2分鐘，再做下一個項目)
+\n&#160;&#160;&#160;&#160;伏地挺身x30/仰臥起坐x15/深蹲x8
 
     </string>
     <string name="myKettleDesc">
@@ -33,6 +54,8 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+
+
 
 
 </resources>
