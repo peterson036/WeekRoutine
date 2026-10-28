@@ -1,4 +1,4 @@
-# [==Intoduction==]
+# Intoduction
 
   This is an Android App Project using Kotlin.
   You could use it as Reminder of Week Routines. 
@@ -11,7 +11,7 @@
   from online database by yourself.
 ---
 
-# [==Features==]
+# Features
 
 Version 1.0
 
@@ -22,7 +22,7 @@ Version 1.0
 3. Users can edit weekly and monthly routines now.
 ---
 
-# [download link]
+# download link
 
 version 1.0
 
@@ -30,7 +30,7 @@ https://drive.google.com/file/d/1TN7pPIdiI5iKNqNKOOc5I6I1VzEJS_GL/view?fbclid=Iw
 
 ---
 
-#　[Why This App is Good]
+# Why This App is Good
 
 (1) Can keep right last completed date even reinstalled if new routine always add in the tail of list data
 (2) Less in Clean Code, More in our Demand
