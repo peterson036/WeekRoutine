@@ -21,10 +21,9 @@ Version 1.0
 
 # Download Link
 
-version 1.0
+version 1.1
 
-https://drive.google.com/file/d/1TN7pPIdiI5iKNqNKOOc5I6I1VzEJS_GL/view?fbclid=IwY2xjawVPIvdleHRuA2FlbQIxMQBwZG9mAXNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR-BlAJ6lYbMIy7pj_DFuoxRPWOQj8Go32SmvbnrWkopUMMFFTSySWOH_c__gg_aem_Bna1RSo_jI6nczC7lQuzRw
-
+https://drive.google.com/file/d/1hr2UUIstWBZS8hrIZ5UtCRfUaI73urzO/view?usp=drive_link
 
 # Why This App is Good
 
