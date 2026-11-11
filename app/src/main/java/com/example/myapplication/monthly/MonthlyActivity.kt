@@ -336,7 +336,7 @@ class MonthlyActivity : AppCompatActivity(), RoutineListHandler {
             val timeDesc = obj.getString("timeDesc")
 
             val storedListData:ListData = RoutineDataManager.getMonthlyRoutineData(orderNo)
-            if(storedListData.name.isEmpty()) {
+            if(isPureEmpty(storedListData)) {
                 initData.add(
                     ListData(
                         orderNo = orderNo,
@@ -363,6 +363,10 @@ class MonthlyActivity : AppCompatActivity(), RoutineListHandler {
             }
         }
         return refineSourceObjects(initData)
+    }
+
+    fun isPureEmpty(storedListData:ListData):Boolean{
+        return storedListData.name.isBlank() && storedListData.desc.isBlank()
     }
     var mIsShowAll: Boolean = false
     var mIsShowEmpty: Boolean = false

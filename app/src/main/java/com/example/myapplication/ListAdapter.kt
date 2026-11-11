@@ -41,23 +41,29 @@ class ListAdapter(context: Context, dataArrayList: ArrayList<ListData>) :
             } else {
                 blankPrefix = " "
             }
-            val percentageText = getPercentage(getDiffDays(listData.time), listData.timeDesc)
-            listTimeDesc.text = percentageText + " x " + blankPrefix +  listData.timeDesc + "天"
 
-            val percentageDouble = percentageText.toDouble()
-            if(percentageDouble >= 1.3){
-                listTimeDesc.setTextColor(Color.RED)
-            } else if (percentageDouble > 0.7){
-                listTimeDesc.setTextColor(Color.BLUE)
-            } else {
-                listTimeDesc.setTextColor(Color.GREEN)
+            if(!(listData.timeDesc.isEmpty())) {
+                if(!listData.time.isEmpty()){
+                    val percentageText = getPercentage(getDiffDays(listData.time), listData.timeDesc)
+                    listTimeDesc.text = percentageText + " x " + blankPrefix + listData.timeDesc + "天"
+
+                    val percentageDouble = percentageText.toDouble()
+                    if(percentageDouble >= 1.3){
+                        listTimeDesc.setTextColor(Color.RED)
+                    } else if (percentageDouble > 0.7){
+                        listTimeDesc.setTextColor(Color.BLUE)
+                    } else {
+                        listTimeDesc.setTextColor(Color.GREEN)
+                    }
+                } else {
+                    listTimeDesc.text = listData.timeDesc + "天"
+                }
             }
+
+
         } else {
             listTimeDesc.text = ""
         }
-
-
-
 
         listTime.text = listData.time
 
